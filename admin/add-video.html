@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Meddilog — Админ: Добавить видео</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background-color: #f8f8f8;
+      color: #1a1a1a;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 32px;
+      background: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .logo {
+      font-size: 2.6rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: #1a1a1a;
+    }
+
+    .logo span {
+      color: #444;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      margin-top: 8px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    /* Вкладки */
+    .tabs {
+      display: flex;
+      margin-bottom: 24px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .tab {
+      padding: 12px 24px;
+      cursor: pointer;
+      font-weight: 600;
+      color: #666;
+      transition: all 0.2s;
+      border-bottom: 3px solid transparent;
+    }
+
+    .tab.active {
+      color: #1a1a1a;
+      border-bottom: 3px solid #1a1a1a;
+    }
+
+    .tab:hover:not(.active) {
+      color: #444;
+      background: #f5f5f5;
+    }
+
+    /* Контент вкладок */
+    .tab-content {
+      display: none;
+      padding: 24px;
+      background: #fafafa;
+      border: 1px solid #eee;
+      border-radius: 8px;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #222;
+      font-size: 0.95rem;
+    }
+
+    input[type="text"],
+    input[type="url"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+      background-color: #fff;
+      color: #1a1a1a;
+    }
+
+    input[type="text"]:focus,
+    input[type="url"]:focus {
+      border-color: #888;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .file-upload {
+      border: 2px dashed #ccc;
+      padding: 20px;
+      text-align: center;
+      border-radius: 6px;
+      background: #f9f9f9;
+      cursor: pointer;
+      transition: border 0.3s, background 0.3s;
+    }
+
+    .file-upload:hover {
+      border-color: #999;
+      background: #f0f0f0;
+    }
+
+    .file-upload p {
+      margin: 0;
+      color: #555;
+      font-size: 0.95rem;
+    }
+
+    .file-info {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: #777;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: #1a1a1a;
+      color: white;
+      font-size: 1.05rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .submit-btn:hover {
+      background: #000;
+      transform: translateY(-1px);
+    }
+
+    /* Секция с карточками видео */
+    .video-list {
+      margin-top: 40px;
+      border-top: 1px solid #eee;
+      padding-top: 24px;
+    }
+
+    .video-list h2 {
+      font-size: 1.4rem;
+      color: #222;
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .video-card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .video-thumbnail {
+      width: 100%;
+      height: 160px;
+      background: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      font-size: 0.9rem;
+    }
+
+    .video-info {
+      padding: 14px;
+    }
+
+    .video-info h3 {
+      font-size: 1rem;
+      color: #1a1a1a;
+      margin-bottom: 6px;
+    }
+
+    .video-meta {
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    .video-type {
+      display: inline-block;
+      padding: 2px 6px;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      margin-right: 6px;
+    }
+
+    .video-actions {
+      margin-top: 8px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      padding: 6px 10px;
+      font-size: 0.85rem;
+      border: 1px solid #aaa;
+      background: #fff;
+      color: #333;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background: #f0f0f0;
+    }
+
+    .btn.delete {
+      color: #c00;
+      border-color: #c00;
+    }
+
+    .btn.delete:hover {
+      background: #ffeaea;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="logo">Meddi<span>log</span></div>
+      <h1>Добавить новое видео</h1>
+    </header>
+
+    <!-- Вкладки -->
+    <div class="tabs">
+      <div class="tab active" onclick="openTab(event, 'upload')">Загрузить видео</div>
+      <div class="tab" onclick="openTab(event, 'link')">Ссылка на YouTube</div>
+    </div>
+
+    <!-- Вкладка: Загрузка -->
+    <div id="upload" class="tab-content active">
+      <div class="form-group">
+        <label for="videoFile">Выберите видео файл</label>
+        <div class="file-upload" onclick="document.getElementById('fileInput').click()">
+          <p>Нажмите, чтобы выбрать файл или перетащите сюда</p>
+          <p class="file-info">Поддерживаемые форматы: MP4, AVI, MOV</p>
+          <input type="file" id="fileInput" accept="video/*" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="titleUpload">Название видео</label>
+        <input type="text" id="titleUpload" placeholder="Введите название видео" />
+      </div>
+
+      <button class="submit-btn" onclick="addUploadedVideo()">Добавить видео</button>
+    </div>
+
+    <!-- Вкладка: Ссылка -->
+    <div id="link" class="tab-content">
+      <div class="form-group">
+        <label for="youtubeUrl">Ссылка на YouTube</label>
+        <input type="url" id="youtubeUrl" placeholder="https://www.youtube.com/watch?v=..." />
+      </div>
+
+      <div class="form-group">
+        <label for="titleLink">Название видео</label>
+        <input type="text" id="titleLink" placeholder="Введите название видео" />
+      </div>
+
+      <button class="submit-btn" onclick="addYoutubeVideo()">Добавить ссылку</button>
+    </div>
+
+    <!-- Список видео -->
+    <section class="video-list">
+      <h2>Загруженные видео</h2>
+      <div class="video-grid" id="videoGrid">
+        <!-- Примеры карточек -->
+        <div class="video-card">
+          <div class="video-thumbnail">Загруженное видео</div>
+          <div class="video-info">
+            <h3>Введение в Meddilog</h3>
+            <div class="video-meta">
+              <span class="video-type">Файл</span>
+              <span>12.04.2025</span>
+            </div>
+            <div class="video-actions">
+              <button class="btn">Редакт.</button>
+              <button class="btn delete">Удалить</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="video-card">
+          <div class="video-thumbnail">YouTube</div>
+          <div class="video-info">
+            <h3>Как использовать YouTube интеграцию</h3>
+            <div class="video-meta">
+              <span class="video-type">YouTube</span>
+              <span>10.04.2025</span>
+            </div>
+            <div class="video-actions">
+              <button class="btn">Редакт.</button>
+              <button class="btn delete">Удалить</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    function openTab(evt, tabName) {
+      const contents = document.getElementsByClassName("tab-content");
+      for (let i = 0; i < contents.length; i++) {
+        contents[i].classList.remove("active");
+      }
+      const tabs = document.getElementsByClassName("tab");
+      for (let i = 0; i < tabs.length; i++) {
+        tabs[i].classList.remove("active");
+      }
+      document.getElementById(tabName).classList.add("active");
+      evt.currentTarget.classList.add("active");
+    }
+
+    function addUploadedVideo() {
+      const title = document.getElementById("titleUpload").value.trim() || "Без названия";
+      addVideoCard(title, "Файл", new Date().toLocaleDateString("ru-RU"));
+    }
+
+    function addYoutubeVideo() {
+      const title = document.getElementById("titleLink").value.trim() || "YouTube видео";
+      addVideoCard(title, "YouTube", new Date().toLocaleDateString("ru-RU"));
+    }
+
+    function addVideoCard(title, type, date) {
+      const grid = document.getElementById("videoGrid");
+      const card = document.createElement("div");
+      card.className = "video-card";
+
+      card.innerHTML = `
+        <div class="video-thumbnail">${type}</div>
+        <div class="video-info">
+          <h3>${title}</h3>
+          <div class="video-meta">
+            <span class="video-type">${type}</span>
+            <span>${date}</span>
+          </div>
+          <div class="video-actions">
+            <button class="btn">Редакт.</button>
+            <button class="btn delete">Удалить</button>
+          </div>
+        </div>
+      `;
+
+      grid.prepend(card); // Новое видео сверху
+    }
+  </script>
+
+</body>
+</html>

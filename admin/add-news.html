@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Meddilog — Админ: Добавить статью</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background-color: #f7f7f7;
+      color: #1a1a1a;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 32px;
+      background: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .logo {
+      font-size: 2.6rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: #1a1a1a;
+    }
+
+    .logo span {
+      color: #444;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      margin-top: 8px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    /* Форма */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #222;
+      font-size: 0.95rem;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+      background-color: #fff;
+      color: #1a1a1a;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus {
+      border-color: #888;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Загрузка изображения */
+    .file-upload {
+      border: 2px dashed #ccc;
+      padding: 16px;
+      text-align: center;
+      border-radius: 6px;
+      background: #f9f9f9;
+      cursor: pointer;
+    }
+
+    .file-upload:hover {
+      border-color: #999;
+      background: #f0f0f0;
+    }
+
+    .file-upload p {
+      margin: 0;
+      color: #555;
+      font-size: 0.95rem;
+    }
+
+    .file-info {
+      font-size: 0.85rem;
+      color: #777;
+      margin-top: 6px;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    /* Кнопки */
+    .btn {
+      padding: 10px 16px;
+      background: #1a1a1a;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: background 0.3s;
+    }
+
+    .btn:hover {
+      background: #000;
+    }
+
+    .btn.secondary {
+      background: #eee;
+      color: #333;
+      border: 1px solid #ccc;
+    }
+
+    .btn.secondary:hover {
+      background: #ddd;
+    }
+
+    .btn.danger {
+      background: #333;
+    }
+
+    .btn.danger:hover {
+      background: #000;
+    }
+
+    /* Блоки контента статьи */
+    .content-blocks {
+      margin-top: 30px;
+      border-top: 1px solid #eee;
+      padding-top: 20px;
+    }
+
+    .block-list {
+      margin-top: 16px;
+    }
+
+    .block-item {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      background: #fdfdfd;
+      position: relative;
+    }
+
+    .block-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-weight: 600;
+      color: #222;
+      font-size: 1rem;
+    }
+
+    .block-controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    .block-text h4,
+    .block-image h4 {
+      margin-bottom: 8px;
+      color: #1a1a1a;
+    }
+
+    .block-text p {
+      color: #444;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .block-image img {
+      width: 100%;
+      max-height: 200px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-top: 8px;
+      border: 1px solid #eee;
+    }
+
+    .placeholder-img {
+      width: 100%;
+      height: 120px;
+      background: #eee;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #aaa;
+      font-size: 0.9rem;
+    }
+
+    /* Добавить блок */
+    .add-block {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .add-block select {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: white;
+      font-size: 0.95rem;
+    }
+
+    /* Секция отправки */
+    .submit-section {
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    .submit-btn {
+      padding: 14px 24px;
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="logo">Meddi<span>log</span></div>
+      <h1>Добавить новую статью</h1>
+    </header>
+
+    <form id="articleForm">
+      <!-- Заголовок статьи -->
+      <div class="form-group">
+        <label for="articleTitle">Заголовок статьи</label>
+        <input type="text" id="articleTitle" placeholder="Введите заголовок статьи" required />
+      </div>
+
+      <!-- Обложка статьи -->
+      <div class="form-group">
+        <label>Обложка статьи</label>
+        <div class="file-upload" onclick="document.getElementById('coverImage').click()">
+          <p>Нажмите, чтобы загрузить обложку</p>
+          <p class="file-info">Поддерживаемые форматы: JPG, PNG, WEBP</p>
+          <input type="file" id="coverImage" accept="image/*" />
+        </div>
+      </div>
+
+      <!-- Блоки контента -->
+      <section class="content-blocks">
+        <h2 style="font-size: 1.3rem; color: #222; margin-bottom: 12px;">Контент статьи</h2>
+        <p style="color: #666; font-size: 0.9rem; margin-bottom: 16px;">
+          Добавьте блоки: текст с заголовком или изображение.
+        </p>
+
+        <div class="block-list" id="blockList">
+          <!-- Блоки будут добавляться сюда -->
+        </div>
+
+        <!-- Кнопка добавления блока -->
+        <div class="add-block">
+          <select id="blockType">
+            <option value="text">Текст: заголовок + описание</option>
+            <option value="image">Изображение</option>
+          </select>
+          <button type="button" class="btn" onclick="addBlock()">Добавить</button>
+        </div>
+      </section>
+
+      <!-- Кнопка отправки -->
+      <div class="submit-section">
+        <button type="submit" class="btn submit-btn">Опубликовать статью</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    let blockCounter = 0;
+
+    function addBlock() {
+      const blockType = document.getElementById("blockType").value;
+      const blockList = document.getElementById("blockList");
+      const id = `block-${blockCounter++}`;
+
+      const block = document.createElement("div");
+      block.className = "block-item";
+      block.dataset.id = id;
+
+      if (blockType === "text") {
+        block.innerHTML = `
+          <div class="block-header">
+            <span>Текстовый блок</span>
+            <div class="block-controls">
+              <button type="button" class="btn secondary" onclick="editBlock('${id}')">Редакт.</button>
+              <button type="button" class="btn danger" onclick="removeBlock('${id}')">Удалить</button>
+            </div>
+          </div>
+          <div class="block-text">
+            <h4 contenteditable="true">Заголовок текста</h4>
+            <p contenteditable="true">Введите описание или основной текст...</p>
+          </div>
+        `;
+      } else if (blockType === "image") {
+        block.innerHTML = `
+          <div class="block-header">
+            <span>Фото-блок</span>
+            <div class="block-controls">
+              <button type="button" class="btn secondary" onclick="uploadImage('${id}')">Загрузить</button>
+              <button type="button" class="btn danger" onclick="removeBlock('${id}')">Удалить</button>
+            </div>
+          </div>
+          <div class="block-image">
+            <div class="placeholder-img">Место для изображения</div>
+            <input type="file" id="img-input-${id}" accept="image/*" style="display:none;" onchange="displayImage(this, '${id}')" />
+          </div>
+        `;
+      }
+
+      blockList.appendChild(block);
+    }
+
+    function removeBlock(id) {
+      const block = document.querySelector(`[data-id="${id}"]`);
+      if (block) block.remove();
+    }
+
+    function editBlock(id) {
+      const block = document.querySelector(`[data-id="${id}"]`);
+      // В данном случае редактирование — через contenteditable
+      alert("Вы можете редактировать текст прямо в блоке, кликнув по нему.");
+    }
+
+    function uploadImage(id) {
+      document.getElementById(`img-input-${id}`).click();
+    }
+
+    function displayImage(input, id) {
+      const block = document.querySelector(`[data-id="${id}"]`);
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.readAsDataURL(input.files[0]);
+        reader.onload = function(e) {
+          const placeholder = block.querySelector(".placeholder-img");
+          if (placeholder) placeholder.remove();
+
+          let img = block.querySelector("img");
+          if (!img) {
+            img = document.createElement("img");
+            block.querySelector(".block-image").appendChild(img);
+          }
+          img.src = e.target.result;
+        };
+  
+      }
+    }
+
+    // Отправка формы
+    document.getElementById("articleForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      alert("Статья успешно сохранена!");
+
+      // Здесь можно отправить данные на сервер
+    });
+
+    // Пример: добавить один пустой блок при загрузке
+    // addBlock(); // раскомментировать, если нужно начать с одного блока
+  </script>
+
+</body>
+</html>

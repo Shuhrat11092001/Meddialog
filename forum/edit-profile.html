@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Редактирование профиля</title>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --panel:#ffffff;
+      --text:#0a0a0a;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+      --accent:#111111;
+      --accent-weak:#f6f7f8;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial; background:var(--bg); color:var(--text)}
+
+    .header{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid var(--line)}
+    .header-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:24px}
+    .btn{border:1px solid var(--line);background:#fff;color:var(--text);padding:8px 14px;border-radius:999px;cursor:pointer;font-weight:600;text-decoration:none;display:inline-flex;align-items:center}
+    .btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+
+    .container{max-width:900px;margin:18px auto;padding:0 16px;display:grid;grid-template-columns:1fr 260px;gap:18px}
+    @media (max-width: 960px){.container{grid-template-columns:1fr}}
+
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+    .title{font-size:18px;font-weight:700;margin-bottom:10px}
+
+    .form-row{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+    label{font-weight:600;font-size:14px}
+    input[type="text"], input[type="password"]{padding:10px;border:1px solid var(--line);border-radius:8px;font-size:14px}
+
+    .avatar-preview{width:72px;height:72px;border-radius:50%;border:2px solid #111;background:#f2f2f2;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:32px}
+
+    .icons-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(48px,1fr));gap:8px;margin-top:10px}
+    .icon-item{display:flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:10px;height:48px;cursor:pointer;background:#fff;font-size:24px}
+    .icon-item.selected{outline:2px solid #111}
+
+    .muted{color:var(--muted);font-size:13px}
+    .danger{color:#c00}
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <div class="brand">Meddialog</div>
+      <div>
+        <a class="btn" href="profile.html">← Назад к профилю</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <div class="title">Редактировать профиль</div>
+
+      <div class="form-row">
+        <label>Иконка профиля</label>
+        <div class="avatar-preview" id="avatarPreview">U</div>
+        <div class="icons-grid" id="iconsGrid"></div>
+        <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
+          <button class="btn" id="clearIconBtn" type="button">Удалить иконку</button>
+        </div>
+        <div class="muted">Выберите эмодзи/иконку или удалите её. Если иконки нет, будет показана первая буква имени.</div>
+      </div>
+
+      <div class="form-row">
+        <label>Фото-аватар</label>
+        <input type="file" id="avatarFile" accept="image/*" />
+        <div class="muted">Сначала выберите изображение, вы увидите предпросмотр. Затем нажмите «Загрузить фото», чтобы сохранить.</div>
+        <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
+          <button class="btn" id="uploadAvatarBtn" type="button">Загрузить фото</button>
+          <button class="btn" id="clearPhotoBtn" type="button">Удалить фото</button>
+        </div>
+        <div class="muted" id="photoMsg"></div>
+      </div>
+
+      <div class="form-row">
+        <label for="displayName">Отображаемое имя</label>
+        <input type="text" id="displayName" placeholder="Иван Иванов" />
+      </div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+        <button class="btn btn-primary" id="saveProfileBtn" type="button">Сохранить</button>
+        <a class="btn" href="profile.html">Отмена</a>
+      </div>
+    </section>
+
+    <aside class="card">
+      <div class="title">Смена пароля</div>
+      <div class="form-row">
+        <label for="currentPassword">Текущий пароль</label>
+        <input type="password" id="currentPassword" placeholder="••••••••" />
+      </div>
+      <div class="form-row">
+        <label for="newPassword">Новый пароль</label>
+        <input type="password" id="newPassword" placeholder="Не менее 6 символов" />
+      </div>
+      <div class="form-row">
+        <label for="confirmPassword">Подтвердите пароль</label>
+        <input type="password" id="confirmPassword" placeholder="Повторите новый пароль" />
+      </div>
+      <button class="btn" id="changePasswordBtn" type="button">Обновить пароль</button>
+      <p class="muted" id="passwordMsg">Пока что смена пароля требует серверного API. Мы подготовили интерфейс; при добавлении API он начнёт работать.</p>
+    </aside>
+  </main>
+
+  <script>
+    const ICONS = [
+      '😀','😎','🧑\u200d⚕️','👩\u200d⚕️','🧠','❤️','💙','💊','🩺','🧬','🧪','⚕️','🏥','🌿','🌟','🐱','🐶','🐼','🚀','🎯','📚'
+    ];
+
+    function getStoredUser(){
+      try { return JSON.parse(localStorage.getItem('user') || 'null'); } catch { return null; }
+    }
+    function setStoredUser(user){
+      localStorage.setItem('user', JSON.stringify(user));
+    }
+
+    // Prefill UI
+    const user = getStoredUser();
+    let tempPhotoUrl = null; // локальный предпросмотр выбранного, но ещё не загруженного файла
+    const displayNameInput = document.getElementById('displayName');
+    const avatarPreview = document.getElementById('avatarPreview');
+    const iconsGrid = document.getElementById('iconsGrid');
+
+    function updatePreview(){
+      const name = (displayNameInput.value || user?.name || 'U').trim();
+      const letter = name ? name[0].toUpperCase() : 'U';
+      const icon = (user && user.avatar_icon) ? user.avatar_icon : null;
+      const url = tempPhotoUrl || (user && user.avatar_url) || null;
+      if (url){
+        avatarPreview.innerHTML = `<img src="${url}" alt="avatar" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" />`;
+      } else {
+        avatarPreview.textContent = icon ? icon : letter;
+      }
+    }
+
+    function renderIconsGrid(selected){
+      iconsGrid.innerHTML = '';
+      ICONS.forEach(ic => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'icon-item' + (selected === ic ? ' selected' : '');
+        btn.textContent = ic;
+        btn.addEventListener('click', () => {
+          if (!user) return;
+          user.avatar_icon = ic;
+          setStoredUser(user);
+          renderIconsGrid(ic);
+          updatePreview();
+        });
+        iconsGrid.appendChild(btn);
+      });
+    }
+
+    if (user){
+      displayNameInput.value = user.name || '';
+      renderIconsGrid(user.avatar_icon || null);
+    } else {
+      renderIconsGrid(null);
+    }
+    updatePreview();
+
+    // Listeners
+    displayNameInput.addEventListener('input', updatePreview);
+
+    document.getElementById('clearIconBtn').addEventListener('click', () => {
+      if (!user) return;
+      delete user.avatar_icon;
+      setStoredUser(user);
+      renderIconsGrid(null);
+      updatePreview();
+    });
+
+    document.getElementById('saveProfileBtn').addEventListener('click', async () => {
+      if (!user){
+        alert('Вы не авторизованы. Пожалуйста, войдите в аккаунт.');
+        return;
+      }
+      const newName = displayNameInput.value.trim();
+      if (!newName){
+        alert('Имя не может быть пустым');
+        return;
+      }
+      // Сохраним профиль на сервере
+      try{
+        const fd = new FormData();
+        fd.append('user_uniq_id', user.uniq_id||'');
+        fd.append('name', newName);
+        fd.append('avatar_icon', user.avatar_icon || '');
+        fd.append('avatar_url', user.avatar_url || '');
+        const resp = await fetch('../server/update_user_profile_api_server.php', { method: 'POST', body: fd });
+        const data = await resp.json();
+        if (!resp.ok || !data.ok){ throw new Error((data && data.error) ? data.error : 'Ошибка обновления профиля'); }
+        // Синхронизируем localStorage с сервером
+        setStoredUser({
+          id: data.user.id,
+          name: data.user.name,
+          email: data.user.email,
+          uniq_id: data.user.uniq_id,
+          avatar_icon: data.user.avatar_icon || null,
+          avatar_url: data.user.avatar_url || null,
+        });
+        // Вернёмся к профилю
+        window.location.href = 'profile.html';
+      } catch(err){
+        alert('Ошибка при сохранении на сервер: ' + err.message);
+      }
+    });
+
+    document.getElementById('changePasswordBtn').addEventListener('click', async () => {
+      const cur = document.getElementById('currentPassword').value;
+      const np = document.getElementById('newPassword').value;
+      const cp = document.getElementById('confirmPassword').value;
+      const msg = document.getElementById('passwordMsg');
+
+      if (!user){ msg.textContent = 'Вы не авторизованы.'; return; }
+      if (!np || np.length < 6){ msg.textContent = 'Новый пароль должен быть не менее 6 символов.'; return; }
+      if (np !== cp){ msg.textContent = 'Пароли не совпадают.'; return; }
+
+      // Вызов серверного API смены пароля
+      try{
+        msg.textContent = 'Обновляем пароль...';
+        const fd = new FormData();
+        fd.append('type','change_password');
+        fd.append('user_uniq_id', user.uniq_id||'');
+        fd.append('current_password', cur);
+        fd.append('new_password', np);
+        const resp = await fetch('../server/register_login_api_server.php', { method: 'POST', body: fd });
+        const data = await resp.json();
+        if (!resp.ok || !data.ok){
+          throw new Error(data && data.error ? data.error : 'Ошибка обновления пароля');
+        }
+        msg.textContent = 'Пароль обновлён.';
+        // Очистим поля
+        document.getElementById('currentPassword').value = '';
+        document.getElementById('newPassword').value = '';
+        document.getElementById('confirmPassword').value = '';
+      } catch(err){
+        msg.textContent = err.message || 'Ошибка обновления пароля';
+      }
+    });
+
+    // Фото-аватар: выбор файла и предпросмотр
+    const avatarFile = document.getElementById('avatarFile');
+    const uploadBtn = document.getElementById('uploadAvatarBtn');
+    const clearPhotoBtn = document.getElementById('clearPhotoBtn');
+    const photoMsg = document.getElementById('photoMsg');
+
+    avatarFile.addEventListener('change', () => {
+      const f = avatarFile.files && avatarFile.files[0];
+      if (!f){ tempPhotoUrl = null; updatePreview(); return; }
+      // preview before upload
+      tempPhotoUrl = URL.createObjectURL(f);
+      updatePreview();
+      photoMsg.textContent = 'Нажмите «Загрузить фото», чтобы применить.';
+    });
+
+    uploadBtn.addEventListener('click', async () => {
+      const f = avatarFile.files && avatarFile.files[0];
+      if (!user){ alert('Вы не авторизованы'); return; }
+      if (!f){ alert('Сначала выберите файл'); return; }
+      try{
+        photoMsg.textContent = 'Загрузка...';
+        const fd = new FormData();
+        fd.append('user_uniq_id', user.uniq_id||'');
+        fd.append('avatar', f);
+        const resp = await fetch('../server/upload_avatar_api_server.php', { method: 'POST', body: fd });
+        const data = await resp.json();
+        if (!resp.ok || !data.ok){ throw new Error((data && data.error) ? data.error : 'Ошибка загрузки'); }
+        user.avatar_url = data.avatar_url;
+        setStoredUser(user);
+        // очистим временный объект
+        if (tempPhotoUrl){ URL.revokeObjectURL(tempPhotoUrl); tempPhotoUrl = null; }
+        updatePreview();
+        photoMsg.textContent = 'Фото обновлено.';
+      } catch(err){
+        photoMsg.textContent = err.message || 'Ошибка загрузки фото';
+      }
+    });
+
+    clearPhotoBtn.addEventListener('click', () => {
+      if (!user) return;
+      user.avatar_url = null;
+      setStoredUser(user);
+      if (tempPhotoUrl){ URL.revokeObjectURL(tempPhotoUrl); tempPhotoUrl = null; }
+      updatePreview();
+      photoMsg.textContent = 'Фото удалено. Будет показана эмодзи/буква.';
+    });
+  </script>
+</body>
+</html>

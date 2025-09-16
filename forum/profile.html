@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Профиль пользователя</title>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --panel:#ffffff;
+      --text:#0a0a0a;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+      --accent:#111111; /* чёрный */
+      --accent-weak:#f6f7f8;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial; background:var(--bg); color:var(--text)}
+
+    /* Header */
+    .header{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid var(--line)}
+    .header-inner{max-width:1100px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:30px}
+    .btn{border:1px solid var(--line);background:#fff;color:var(--text);padding:8px 14px;border-radius:999px;cursor:pointer;font-weight:600}
+    .btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+    a.btn{text-decoration:none;display:inline-flex;align-items:center}
+
+    /* Layout */
+    .container{max-width:1100px;margin:18px auto;padding:0 16px;display:grid;grid-template-columns:1fr 320px;gap:18px}
+    @media (max-width: 960px){.container{grid-template-columns:1fr}}
+
+    /* Profile header */
+    .profile-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;align-items:center;gap:14px}
+    .avatar{width:56px;height:56px;border-radius:50%;border:2px solid #111;background:#f2f2f2;display:flex;align-items:center;justify-content:center;font-weight:700}
+    .u-meta{display:flex;flex-direction:column}
+    .u-name{font-size:20px;font-weight:700}
+    .u-id{color:var(--muted);font-size:14px}
+
+    /* Tabs */
+    .tabs{display:flex;gap:8px;margin-top:12px;border-bottom:1px solid var(--line)}
+    .tab{padding:10px 12px;border-bottom:2px solid transparent;color:var(--muted);cursor:pointer;font-weight:600}
+    .tab.active{color:var(--text);border-color:var(--accent)}
+
+    /* Feed */
+    .feed{display:flex;flex-direction:column;gap:12px;margin-top:12px}
+    .post{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px}
+    .post-head{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:14px;margin-bottom:6px}
+    .post-title{font-size:16px;font-weight:600;margin:4px 0}
+    .post-text{font-size:14px;color:#333}
+    .post-actions{display:flex;gap:10px;margin-top:8px}
+    .chip{background:var(--accent-weak);border:1px solid var(--line);border-radius:999px;padding:6px 10px;font-size:12px}
+
+    /* Sidebar */
+    .sidebar{position:sticky;top:72px;height:fit-content;display:flex;flex-direction:column;gap:12px}
+    .side-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px}
+    .side-title{font-weight:700;margin-bottom:6px}
+    .row{
+      display:flex;
+      justify-content:space-between;
+      padding:6px 0;
+      border-bottom:1px solid var(--line);
+      cursor:pointer;
+      align-items: center;
+    }
+    .row:last-child{border-bottom:none}
+
+    .stat{display:flex;flex-direction:column}
+    .stat b{font-size:18px}
+    .stat span{font-size:12px;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <div class="brand">Meddialog</div>
+      <div>
+        <a class="btn" href="index.html">← Назад к постам</a>
+        <a class="btn btn-primary" href="publish-posts.html">+ Создать пост</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- LEFT -->
+    <section>
+      <div class="profile-card">
+        <div class="avatar" id="avatar">u</div>
+        <div class="u-meta">
+          <div class="u-name" id="uName">Имя пользователя</div>
+          <div class="u-id" id="uId">u/anonymous • 0 followers • 0 karma</div>
+        </div>
+      </div>
+
+      <nav class="tabs" role="tablist">
+        <button class="tab active" data-tab="posts">Посты</button>
+        <button class="tab" data-tab="comments">Комментарии</button>
+        <button class="tab" data-tab="notifications">Уведомления</button>
+      </nav>
+
+      <div id="pane-posts" class="feed" style="display:flex"></div>
+      <div id="pane-comments" class="feed" style="display:none"></div>
+      <div id="pane-notifications" class="feed" style="display:none"></div>
+    </section>
+
+    <!-- RIGHT -->
+    <aside class="sidebar">
+      <div class="side-card">
+        <div class="side-title">Профиль</div>
+        <div class="row"><span>Отображаемое имя</span><span id="sdName">—</span></div>
+        <div class="row"><span>Email</span><span id="sdEmail">—</span></div>
+        <div class="row"><span>UID</span><span id="sdUid">—</span></div>
+      </div>
+
+      <div class="side-card">
+        <div class="side-title">Достижения</div>
+        <div class="row"><span>Карма</span><span id="sdKarma">0</span></div>
+        <div class="row"><span>Возраст аккаунта</span><span id="sdAge">—</span></div>
+      </div>
+
+      <div class="side-card">
+        <div class="side-title">Настройки</div>
+        <div class="row"><span>Профиль</span><a class="btn" href="edit-profile.html">Редактировать</a></div>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    // Простейший клиентский стейт авторизации: ожидаем, что после регистрации
+    // приложение сохранит данные пользователя в localStorage.
+    // Например: localStorage.setItem('user', JSON.stringify({name, email, uniq_id}))
+    const userRaw = localStorage.getItem('user');
+    let user = null;
+    try { 
+        user = userRaw ? JSON.parse(userRaw) : null; 
+    } catch(e){
+        console.error('Ошибка при разборе данных пользователя:', e);
+    }
+
+    function setText(id, value){
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+    }
+
+    if (user){
+      setText('uName', user.name || 'Пользователь');
+      setText('uId', `u/${(user.name||'user').toLowerCase()} • 0 followers • 0 karma`);
+      setText('sdName', user.name || '—');
+      setText('sdEmail', user.email || '—');
+      setText('sdUid', user.uniq_id || '—');
+      const avEl = document.getElementById('avatar');
+      if (avEl){
+        if (user.avatar_url){
+          avEl.innerHTML = `<img src="${user.avatar_url}" alt="avatar" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" />`;
+        } else {
+          avEl.textContent = user.avatar_icon ? user.avatar_icon : ((user.name||'U')[0]?.toUpperCase() || 'U');
+        }
+      }
+    }
+
+    // Табы
+    const tabs = document.querySelectorAll('.tab');
+    const panes = ['posts','comments','notifications'];
+
+    // Helpers
+    function el(id){
+        return document.getElementById(id);
+    }
+
+    
+    function card(title, text){
+      const wrap = document.createElement('div');
+      wrap.className = 'post';
+      wrap.innerHTML = `<div class="post-title">${title}</div><div class=\"post-text\">${text}</div>`;
+      return wrap;
+    }
+
+    // Data loaders
+    let loaded = { posts:false, comments:false, notifications:false };
+    async function loadPosts(){
+      const pane = el('pane-posts');
+      if (!pane) return; pane.innerHTML = '<div class="post"><div class="post-text">Загрузка…</div></div>';
+      const uid = user?.uniq_id;
+      if (!uid){ pane.innerHTML = '<div class="post"><div class="post-text">Войдите, чтобы видеть свои посты</div></div>'; return; }
+      try{
+        const resp = await fetch(`../server/list_user_posts_api_server.php?user_uniq_id=${encodeURIComponent(uid)}`);
+        const data = await resp.json();
+        if (!resp.ok || !data.ok) throw new Error(data.error || 'Ошибка загрузки постов');
+        const arr = Array.isArray(data.posts) ? data.posts : [];
+        if (arr.length === 0){ pane.innerHTML = '<div class="post"><div class="post-text">Вы пока не создали постов</div></div>'; return; }
+        pane.innerHTML='';
+        arr.forEach(p => {
+          const wrap = document.createElement('div');
+          wrap.className='post';
+          const dt = p.created_at ? new Date(p.created_at).toLocaleString() : '';
+          wrap.innerHTML = `
+            <div class="post-head">${dt}</div>
+            <div class="post-title">${p.title || 'Без названия'}</div>
+            <div class="post-text">${(p.body||p.link_url||'').toString().slice(0,240)}${(p.body||'').length>240?'…':''}</div>
+          `;
+          pane.appendChild(wrap);
+        });
+      } catch(err){
+        pane.innerHTML = `<div class="post"><div class="post-text">Ошибка: ${err.message}</div></div>`;
+      }
+    }
+
+    async function loadComments(){
+      const pane = el('pane-comments');
+      if (!pane) return; pane.innerHTML = '<div class="post"><div class="post-text">Загрузка…</div></div>';
+      const uid = user?.uniq_id;
+      if (!uid){ pane.innerHTML = '<div class="post"><div class="post-text">Войдите, чтобы видеть свои комментарии</div></div>'; return; }
+      try{
+        // 1) Ваши комментарии
+        const resp = await fetch(`../server/list_user_comments_api_server.php?user_uniq_id=${encodeURIComponent(uid)}`);
+        const data = await resp.json();
+        if (!resp.ok || !data.ok) throw new Error(data.error || 'Ошибка загрузки комментариев');
+        const arr = Array.isArray(data.comments) ? data.comments : [];
+        pane.innerHTML='';
+        if (arr.length === 0){
+          pane.appendChild(card('Ваши комментарии', 'Комментариев пока нет'));
+        } else {
+          pane.appendChild(card('Ваши комментарии', ''));
+          arr.forEach(c => {
+            const dt = c.created_at ? new Date(c.created_at).toLocaleString() : '';
+            const wrap = document.createElement('div');
+            wrap.className = 'post';
+            wrap.innerHTML = `<div class="post-head">${dt}</div><div class="post-title">${c.author_name || c.author || 'Вы'}</div><div class="post-text">${(c.body||'').toString()}</div>`;
+            pane.appendChild(wrap);
+          });
+        }
+
+        // 2) Ответы на ваши комментарии
+        const nresp = await fetch(`../server/list_notifications_api_server.php?user_uniq_id=${encodeURIComponent(uid)}`);
+        const ndata = await nresp.json();
+        if (!nresp.ok || !ndata.ok) throw new Error(ndata.error || 'Ошибка загрузки ответов');
+        const replies = Array.isArray(ndata.notifications?.comment_replies) ? ndata.notifications.comment_replies : [];
+        if (replies.length === 0){
+          pane.appendChild(card('Ответы на ваши комментарии', 'Пока нет ответов'));
+        } else {
+          pane.appendChild(card('Ответы на ваши комментарии', ''));
+          replies.forEach(n => {
+            const dt = n.created_at ? new Date(n.created_at).toLocaleString() : '';
+            const wrap = document.createElement('div');
+            wrap.className='post';
+            wrap.innerHTML = `<div class="post-title">${n.author_name || 'Пользователь'} ответил в теме: ${n.post_title || ''}</div><div class="post-text">${n.body || ''}</div><div class="post-head">${dt}</div>`;
+            pane.appendChild(wrap);
+          });
+        }
+      } catch(err){
+        pane.innerHTML = `<div class=\"post\"><div class=\"post-text\">Ошибка: ${err.message}</div></div>`;
+      }
+    }
+
+    async function loadNotifications(){
+      const pane = el('pane-notifications');
+      if (!pane) return; pane.innerHTML = '<div class="post"><div class="post-text">Загрузка…</div></div>';
+      const uid = user?.uniq_id;
+      if (!uid){ pane.innerHTML = '<div class="post"><div class="post-text">Войдите, чтобы видеть уведомления</div></div>'; return; }
+      try{
+        const resp = await fetch(`../server/list_notifications_api_server.php?user_uniq_id=${encodeURIComponent(uid)}`);
+        const data = await resp.json();
+        if (!resp.ok || !data.ok) throw new Error(data.error || 'Ошибка загрузки уведомлений');
+        const pr = data.notifications?.post_replies || [];
+        const cr = data.notifications?.comment_replies || [];
+        pane.innerHTML='';
+        if (pr.length===0 && cr.length===0){
+          pane.appendChild(card('Пока нет уведомлений', 'Здесь будут ответы на ваши посты и комментарии.'));
+          return;
+        }
+        if (pr.length){
+          pane.appendChild(card('Ответы на ваши посты', ''));
+          pr.forEach(n => {
+            const dt = n.created_at ? new Date(n.created_at).toLocaleString() : '';
+            const wrap = document.createElement('div');
+            wrap.className='post';
+            wrap.innerHTML = `<div class=\"post-title\">${n.author_name || 'Пользователь'} ответил на ваш пост: ${n.post_title || ''}</div><div class=\"post-text\">${n.body || ''}</div><div class=\"post-head\">${dt}</div>`;
+            pane.appendChild(wrap);
+          });
+        }
+        if (cr.length){
+          pane.appendChild(card('Ответы на ваши комментарии', ''));
+          cr.forEach(n => {
+            const dt = n.created_at ? new Date(n.created_at).toLocaleString() : '';
+            const wrap = document.createElement('div');
+            wrap.className='post';
+            wrap.innerHTML = `<div class=\"post-title\">${n.author_name || 'Пользователь'} ответил в теме: ${n.post_title || ''}</div><div class=\"post-text\">${n.body || ''}</div><div class=\"post-head\">${dt}</div>`;
+            pane.appendChild(wrap);
+          });
+        }
+      } catch(err){
+        pane.innerHTML = `<div class=\"post\"><div class=\"post-text\">Ошибка: ${err.message}</div></div>`;
+      }
+    }
+
+    function showPane(name){
+      panes.forEach(p => {
+        const el = document.getElementById('pane-'+p);
+        if (el) el.style.display = (p===name?'flex':'none');
+      });
+      tabs.forEach(t => t.classList.toggle('active', t.dataset.tab===name));
+      // Lazy load
+      if (!loaded[name]){
+        if (name==='posts') loadPosts();
+        if (name==='comments') loadComments();
+        if (name==='notifications') loadNotifications();
+        loaded[name] = true;
+      }
+    }
+    tabs.forEach(t => t.addEventListener('click', () => showPane(t.dataset.tab)));
+
+    // Initial load
+    showPane('posts');
+  </script>
+</body>
+</html>

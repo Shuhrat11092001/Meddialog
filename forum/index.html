@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>r/DnD - Белый и Чёрный</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f9f9f9;
+      color: #111;
+      line-height: 1.6;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 350px;
+      background-color: #ffffff;
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid #333;
+    }
+
+    /* Logo */
+    .logo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: black;
+      font-weight: 700;
+      font-size: 30px;
+      text-align: center;
+    }
+
+    .logo img {
+      width: 24px;
+      height: 24px;
+      filter: grayscale(100%);
+    }
+
+    /* Search bar */
+    .search-bar {
+      flex: 1;
+      max-width: 500px;
+      margin: 0 20px;
+      display: flex;
+      align-items: center;
+      background-color: #f0f0f0;
+      border-radius: 20px;
+      padding: 8px 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .search-bar input {
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 14px;
+      color: #333;
+      flex: 1;
+      padding: 0;
+    }
+
+    .search-bar i {
+      color: #777;
+      margin-right: 8px;
+      font-size: 16px;
+    }
+
+    /* Buttons */
+    .btn {
+      background-color: #1a1a1a;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      margin-left: 10px;
+    }
+
+    .btn-outline {
+      background-color: #f0f0f0;
+      color: #333;
+      border: 1px solid #ccc;
+    }
+
+    .publish-button {
+      background-color: transparent;
+      color: #1a1a1a;
+      border: 1px solid #1a1a1a;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-left: 10px;
+    }
+
+    /* Menu icon */
+    .menu-icon {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: white;
+    }
+
+
+
+
+    .btn-primary {
+      background-color: #1a1a1a;
+      color: white;
+    }
+
+
+
+    /* Main container */
+    .container {
+      display: flex;
+      max-width: 1200px;
+      margin: 20px auto;
+      gap: 120px;
+    }
+
+    /* Left sidebar */
+    .left {
+      flex: 3;
+    }
+
+    .post {
+      border-bottom: 1px solid #ddd;
+      padding: 15px 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .post-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .post-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: #ccc;
+      margin-right: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #111;
+      font-weight: bold;
+    }
+
+    .post-author {
+      font-weight: 600;
+      color: #111;
+    }
+
+    .post-time {
+      color: #777;
+      font-size: 0.8rem;
+      margin-left: 5px;
+    }
+
+    .post-title {
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      color: #111;
+    }
+
+    .post-text {
+      color: #444;
+      margin-bottom: 10px;
+    }
+
+    .post-tags {
+      display: inline-block;
+      background-color: #e0e0e0;
+      color: #333;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      margin-right: 5px;
+    }
+
+    .post-actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      background-color: #f0f0f0;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .action-btn:hover {
+      background-color: #e0e0e0;
+    }
+
+    .action-btn span {
+      font-size: 0.9rem;
+    }
+
+    .action-btn i {
+      font-size: 1rem;
+    }
+
+    /* Right sidebar */
+    .right {
+      flex: 1;
+      background-color: #fff;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .sidebar-section {
+      margin-bottom: 20px;
+    }
+
+    .sidebar-title {
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #333;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+    }
+
+    .sidebar-item {
+      background-color: #f0f0f0;
+      padding: 8px 12px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .sidebar-item:hover {
+      background-color: #e0e0e0;
+    }
+
+    .sidebar-info {
+      margin-top: 15px;
+      padding-top: 10px;
+      border-top: 1px solid #eee;
+      padding: 10px;
+    }
+
+    .sidebar-info p {
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .sidebar-image {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+
+
+    .logo h1 {
+      font-size: 28px;
+      font-weight: 600;
+      color: #000;
+      letter-spacing: 0.5px;
+    }
+
+    .logo p {
+      color: #444;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+
+    /* Model */
+
+    .model-container{
+      display: none; /* Скрыто по умолчанию */
+      justify-content: center; /* горизонтально */
+      align-items: center;     /* вертикально */
+      position: fixed;
+      inset: 0; /* то же самое, что left:0; top:0; right:0; bottom:0; */
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+    }
+
+    .form-container-register, .form-container-login{
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      z-index: 1000;
+      background-color: #f0f0f0;
+      padding: 40px;
+      width: 30%;
+    }
+
+      /* Кнопка закрытия */
+    .close-btn {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      width: 32px;
+      height: 32px;
+      background: none;
+      border: none;
+      font-size: 28px;
+      color: #999;
+      cursor: pointer;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .close-btn:hover {
+      background-color: #f0f0f0;
+      color: #000;
+    }
+
+
+    form{
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 15px;
+      background-color: #fff;
+      color: #000;
+      transition: border 0.3s ease;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #888;
+    }
+
+
+
+    .btn:hover {
+      background-color: #333;
+    }
+
+    .form-footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #555;
+    }
+
+    .form-footer a {
+      color: #000;
+      text-decoration: underline;
+    }
+
+    .form-footer a:hover {
+      color: #333;
+    }
+
+    /* Model */
+
+
+    .showmessage p{
+      color: red;
+    }
+   
+
+    
+
+
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+    }
+
+    /* User menu styles */
+    .user-menu {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .user-menu button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+    }
+    
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      background: white;
+      min-width: 200px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      z-index: 1000;
+      margin-top: 5px;
+      overflow: hidden;
+    }
+    
+    .dropdown-menu a {
+      display: block;
+      padding: 10px 16px;
+      color: #1a1a1b;
+      text-decoration: none;
+      transition: background-color 0.2s;
+    }
+    
+    .dropdown-menu a:hover {
+      background-color: #f6f7f8;
+    }
+    
+    .divider {
+      height: 1px;
+      background-color: #e8e8e8;
+      margin: 4px 0;
+    }
+    
+    .logout {
+      color: #ed1c24 !important;
+    }
+    
+    .user-menu:hover .dropdown-menu {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+
+<!-- Header -->
+  <div class="header">
+    <!-- Logo -->
+    <div class="logo">
+      <span>Meddiaolog</span>
+    </div>
+
+    <!-- Search Bar
+    <div class="search-bar">
+      <i>🔍</i>
+      <input type="text" placeholder="Поиск в Reddit" />
+    </div> -->
+
+    <!-- Right side buttons -->
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <button onclick="window.location.href='publish-posts.html'" class="publish-button">Опубликовать статью</button>
+      <div class="user-menu" id="userMenu">
+        <button class="btn btn-primary" id="userMenuButton">Зарегистрироваться</button>
+        <div class="dropdown-menu" id="userDropdown">
+          <a href="profile.html">Профиль</a>
+          <div class="divider"></div>
+          <a href="#" class="logout" id="logoutBtn">Выйти</a>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- Header -->
+
+
+
+
+<!-- Model -->
+<div class="model-container">
+  <div class="form-container-register">
+    <!-- Кнопка закрытия -->
+    <button class="close-btn">&times;</button>
+    <div class="logo">
+      <h1>Meddialog</h1>
+      <p>Форум для медицинских специалистов</p>
+    </div>
+
+    <form id="form-register">
+      <div class="form-group">
+        <label for="fullname">ФИО</label>
+        <input type="text" id="fullname" name="fullname" placeholder="Иванов Иван Иванович" required />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Электронная почта</label>
+        <input type="email" id="email" name="email" placeholder="example@med.ru" required />
+      </div>
+
+      <div class="form-group">
+        <label for="specialty">Специальность (опционально)</label>
+        <input type="text" id="specialty" name="specialty" placeholder="Терапевт, хирург и т.д." />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Пароль</label>
+        <input type="password" id="password" name="password" placeholder="••••••••" required />
+      </div>
+
+      <div class="form-group">
+        <label for="confirm_password">Подтвердите пароль</label>
+        <input type="password" id="confirm_password" name="confirm_password" placeholder="••••••••" required />
+      </div>
+
+      <div class="showmessage">
+        <p></p>
+      </div>
+
+      <button type="submit" class="btn">Зарегистрироваться</button>
+    </form>
+
+    <div class="form-footer">
+      Уже есть аккаунт? <a id="login" href="#">Войти</a>
+    </div>
+
+  </div>
+  <div class="form-container-login">
+    <!-- Кнопка закрытия -->
+    <button class="close-btn">&times;</button>
+    <div class="logo">
+      <h1>Meddialog</h1>
+      <p>Форум для медицинских специалистов</p>
+    </div>
+    <form id="form-login">
+      <div class="form-group">
+        <label for="email">Электронная почта</label>
+        <input type="email" id="email" name="email" placeholder="example@med.ru" required />
+      </div>
+      <div class="form-group">
+        <label for="password">Пароль</label>
+        <input type="password" id="password" name="password" placeholder="••••••••" required />
+      </div>
+      <div class="showmessage">
+        <p></p>
+      </div>
+      <button type="submit" class="btn">Войти</button>
+    </form>
+  </div>
+</div>
+<!-- Model -->
+
+
+
+  <!-- Main Container -->
+  <div class="container">
+    <!-- Left Side - Posts -->
+    <div class="left" id="postsList"></div>
+
+    <!-- Right Side - Sidebar -->
+    <div class="right">
+      <!-- <div class="sidebar-section">
+        <div class="sidebar-title">Информация о форуме</div>
+        <p><strong>4.2 млн</strong> подписчиков</p>
+        <p><strong>307</strong> активных пользователей</p>
+      </div> -->
+
+      <!-- <div class="sidebar-section">
+        <div class="sidebar-title">Закладки сообщества</div>
+        <div class="sidebar-item">Scheduled Threads</div>
+        <div class="sidebar-item">Resources</div>
+      </div> -->
+
+      <div class="sidebar-section">
+        <div class="sidebar-title">Welcome to /r/DnD</div>
+        <img src="https://i.imgur.com/4dRzQZv.png" alt="DnD Logo" class="sidebar-image" />
+        <div class="sidebar-info">
+          <p><strong>Правила r/DnD:</strong></p>
+          <ol style="margin-top: 5px; font-size: 0.9rem;">
+            <li>Posts must relate to Dungeons & Dragons</li>
+            <li>No spam or self-promotion</li>
+            <li>Be respectful to others</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Пример простой интерактивности (лайки)
+    document.querySelectorAll('.action-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        alert('Клик!');
+      });
+    });
+
+    // ===== Auth UI helpers =====
+    function getStoredUser(){
+      try { return JSON.parse(localStorage.getItem('user') || 'null'); } catch { return null; }
+    }
+
+    function setStoredUser(user){
+      localStorage.setItem('user', JSON.stringify(user));
+    }
+
+    function clearStoredUser(){
+      localStorage.removeItem('user');
+    }
+
+    function updateAuthUI(){
+      const user = getStoredUser();
+      const btn = document.getElementById('userMenuButton');
+      const menu = document.getElementById('userDropdown');
+      if (!btn) return;
+      if (user){
+        const name = user.name || user.fullname || (user.email ? user.email.split('@')[0] : 'user');
+        btn.textContent = `u/${name}`;
+        btn.classList.remove('btn-primary');
+        btn.classList.add('btn');
+        // When authenticated, clicking button toggles dropdown (hover already shows; keep simple)
+        btn.onclick = () => { menu && (menu.style.display = menu.style.display === 'block' ? 'none' : 'block'); };
+      } else {
+        btn.textContent = 'Зарегистрироваться';
+        btn.classList.add('btn-primary');
+        btn.onclick = () => {
+          document.querySelector('.model-container').style.display = 'flex';
+          document.querySelector('.form-container-register').style.display = 'flex';
+          document.querySelector('.form-container-login').style.display = 'none';
+        };
+      }
+    }
+
+    // Close dropdown on outside click
+    document.addEventListener('click', (e) => {
+      const menuWrap = document.getElementById('userMenu');
+      const menu = document.getElementById('userDropdown');
+      if (menu && menuWrap && !menuWrap.contains(e.target)){
+        menu.style.display = 'none';
+      }
+    });
+
+    document.querySelector('.form-footer a').addEventListener('click', () => {
+      document.querySelector('.model-container').style.display = 'flex';
+    });
+
+    document.querySelector('#login').addEventListener('click', () => {
+      document.querySelector('.form-container-register').style.display = 'none';
+      document.querySelector('.form-container-login').style.display = 'flex';
+
+    });
+
+    function closeModal() {
+        document.querySelector('.model-container').style.display = 'none';
+    }
+
+    // Add event listener to close buttons
+    document.querySelectorAll('.close-btn').forEach(btn => {
+        btn.addEventListener('click', closeModal);
+    });
+
+
+    // Регистратция
+    const formRegister = document.querySelector('#form-register');
+    // Слушаем событие отправки формы
+    formRegister.addEventListener('submit', function (event) {
+        // 🔴 Останавливаем стандартную отправку (и перезагрузку страницы)
+        event.preventDefault();
+
+        // Собираем данные формы
+        const formData = new FormData(formRegister);
+        const data = Object.fromEntries(formData); // { name: "Иван", email: "ivan@mail.ru", age: "25" }
+
+        console.log('Register data:', data)
+
+        let valid = validation(data, false)
+
+        // ✅ ЕСЛИ ВСЁ ХОРОШО — отправляем данные на сервер
+        if (valid){
+          let type = 'register'
+          sendToServer(formData, type);
+        }
+
+    });
+
+
+
+    // Авторизация
+    const formLogin = document.querySelector('#form-login');
+    // Слушаем событие отправки формы
+    formLogin.addEventListener('submit', function (event) {
+        // 🔴 Останавливаем стандартную отправку (и перезагрузку страницы)
+        event.preventDefault();
+
+        // Собираем данные формы
+        let islogin = true;
+        const formData = new FormData(formLogin);
+        const data = Object.fromEntries(formData); // { name: "Иван", email: "ivan@mail.ru", age: "25" }
+
+        console.log('Login data:', data)
+
+        let valid = validation(data, true)
+
+        // ✅ ЕСЛИ ВСЁ ХОРОШО — отправляем данные на сервер
+        if (valid){
+          let type = 'login'
+          sendToServer(formData, type);
+        }
+    });
+
+
+
+
+function validation(data, isLogin = false) {
+    let errors = [];
+
+    // Common validations for both login and registration
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(data.email)) {
+        errors.push("Введите корректный email.");
+    }
+
+    if (!data.password) {
+        errors.push("Введите пароль.");
+    }
+
+    // Only run these validations for registration
+    if (!isLogin) {
+        if (!data.fullname || data.fullname.trim().length < 2) {
+            errors.push("Имя должно быть не менее 2 символов.");
+        }
+
+        if (data.password !== data.confirm_password) {
+            errors.push("Пароли не совпадают.");
+        }
+    }
+
+    if (errors.length > 0) {
+        showMessage(errors.join('<br>'));
+        return false;
+    }
+    
+    return true;
+}
+
+
+
+    function showMessage(errors){
+      const showmessage = document.querySelector('.showmessage p')
+      if (showmessage){
+        showmessage.innerHTML = errors
+      } else{
+        console.error('Элемент с showmesssage не найден')
+      }
+    }
+
+
+    function sendToServer(formData, type){
+      formData.append('type', type);
+      const data = Object.fromEntries(formData); // { name: "Иван", email: "ivan@mail.ru", age: "25" }
+      console.log('sendtoServerdata:', data)
+
+      fetch("../server/register_login_api_server.php", {
+        method: "POST",
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log("Ответ сервера:", data);
+        if (data && data.ok && data.user){
+          setStoredUser(data.user);
+          updateAuthUI();
+          closeModal();
+        } else {
+          const msg = (data && data.error) ? data.error : 'Ошибка авторизации/регистрации';
+          showMessage(msg);
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        showMessage('Сетевая ошибка, попробуйте позже');
+      });
+
+    }
+
+
+
+
+    // ===== Загрузка постов из БД =====
+    async function loadPosts(){
+      const list = document.getElementById('postsList');
+      if (!list) return;
+      list.innerHTML = '<div class="post">Загрузка постов...</div>';
+
+      try{
+        const resp = await fetch('../server/list_posts_api_server.php');
+        const data = await resp.json();
+        if (!resp.ok || !data.ok){
+          throw new Error(data.error || 'Ошибка загрузки постов');
+        }
+
+        if (!Array.isArray(data.posts) || data.posts.length === 0){
+          list.innerHTML = '<div class="post"><div class="post-text">Постов пока нет</div></div>';
+          return;
+        }
+
+        console.log('data.posts:', data.posts)
+
+        list.innerHTML = '';
+        data.posts.forEach(p => {
+          const href = `read_forum.html?post_id=${p.id}`;
+          const a = document.createElement('a');
+          a.href = href;
+          a.style.textDecoration = 'none';
+          a.style.color = 'inherit';
+
+          const wrap = document.createElement('div');
+          wrap.className = 'post';
+
+          const header = document.createElement('div');
+          header.className = 'post-header';
+          const author = (p.author_name || '').trim() || 'Пользователь';
+          const initial = author[0] ? author[0].toUpperCase() : 'U';
+          // Порядок приоритета: иконка с сервера -> иконка текущего пользователя (если пост его) -> первая буква
+          const currentUser = getStoredUser && getStoredUser();
+          const avatarChar = p.author_avatar_icon
+            ? p.author_avatar_icon
+            : ((currentUser && currentUser.uniq_id && p.user_uniq_id && currentUser.uniq_id === p.user_uniq_id && currentUser.avatar_icon)
+                ? currentUser.avatar_icon
+                : initial);
+          const avatarUrl = p.author_avatar_url
+            ? p.author_avatar_url
+            : ((currentUser && currentUser.uniq_id && p.user_uniq_id && currentUser.uniq_id === p.user_uniq_id && currentUser.avatar_url)
+                ? currentUser.avatar_url
+                : null);
+          header.innerHTML = `
+            <div class="post-avatar">${avatarUrl ? `<img src="${avatarUrl}" alt="avatar" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" />` : avatarChar}</div>
+            <div class="post-author">${author}</div>
+            <div class="post-time">${p.created_at ? new Date(p.created_at).toLocaleString() : ''}</div>
+          `;
+
+          const title = document.createElement('h3');
+          title.className = 'post-title';
+          title.textContent = p.title || 'Без названия';
+
+          const text = document.createElement('p');
+          text.className = 'post-text';
+          const body = (p.body || '').trim();
+          const link = (p.link_url || '').trim();
+          text.textContent = body ? body.slice(0, 220) + (body.length > 220 ? '…' : '') : (link ? link : '');
+
+          // Media preview: show first file if present
+          let mediaEl = null;
+          if (Array.isArray(p.files) && p.files.length > 0){
+            const f = p.files[0];
+            const src = `../${f.file_path}`;
+            if (f.file_type === 'image'){
+              const img = document.createElement('img');
+              img.src = src;
+              img.alt = '';
+              img.style.width = '100%';
+              img.style.height = '400px';
+              img.style.objectFit = 'contain';
+              img.style.borderRadius = '8px';
+              img.style.margin = '8px 0';
+              mediaEl = img;
+            } else if (f.file_type === 'video'){
+              const vid = document.createElement('video');
+              vid.src = src;
+              vid.controls = true;
+              vid.style.width = '100%';
+              vid.style.height = '400px';
+              vid.style.objectFit = 'contain';
+              vid.style.borderRadius = '8px';
+              vid.style.margin = '8px 0';
+              mediaEl = vid;
+            }
+          }
+
+          const actions = document.createElement('div');
+          actions.className = 'post-actions';
+          const likesCount = Number(p.likes_count || 0);
+          const commentsCount = Number(p.comments_count || 0);
+          actions.innerHTML = `
+            <button class="action-btn like-btn" data-post-id="${p.id}"><i>↑</i> <span class="like-count">${likesCount}</span></button>
+            <button class="action-btn comment-btn" data-post-id="${p.id}"><i>💬</i> <span class="comment-count">${commentsCount}</span></button>
+            <button class="action-btn share-btn" data-post-id="${p.id}"><i>↗️</i> Поделиться</button>
+          `;
+
+          wrap.appendChild(header);
+          wrap.appendChild(title);
+          wrap.appendChild(text);
+          if (mediaEl) wrap.appendChild(mediaEl);
+          wrap.appendChild(actions);
+          a.appendChild(wrap);
+          list.appendChild(a);
+        });
+
+        // Wire like buttons
+        list.querySelectorAll('.like-btn').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const postId = Number(btn.getAttribute('data-post-id'));
+            const user = (function(){ try { return JSON.parse(localStorage.getItem('user')||'null'); } catch { return null; } })();
+            if (!user || !user.uniq_id){
+              alert('Войдите, чтобы поставить лайк');
+              return;
+            }
+            try{
+              const fd = new FormData();
+              fd.append('post_id', postId);
+              fd.append('user_uniq_id', user.uniq_id);
+              const resp = await fetch('../server/like_post_api_server.php', { method: 'POST', body: fd });
+              const data = await resp.json();
+              if (!resp.ok || !data.ok) throw new Error(data.error || 'Ошибка лайка');
+              const cntEl = btn.querySelector('.like-count');
+              if (cntEl) cntEl.textContent = String(data.likes_count || 0);
+            } catch(err){
+              alert(err.message);
+            }
+          });
+        });
+
+        // Wire comment buttons to open post page
+        list.querySelectorAll('.comment-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const postId = Number(btn.getAttribute('data-post-id'));
+            window.location.href = `read_forum.html?post_id=${postId}`;
+          });
+        });
+      } catch(err){
+        console.error(err);
+        list.innerHTML = `<div class="post"><div class="post-text">Ошибка: ${err.message}</div></div>`;
+      }
+    }
+
+    // Инициализация
+    updateAuthUI();
+    // Логаут
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn){
+      logoutBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        clearStoredUser();
+        updateAuthUI();
+      });
+    }
+
+    // Стартовая загрузка постов
+    loadPosts();
+  </script>
+
+</body>
+</html>

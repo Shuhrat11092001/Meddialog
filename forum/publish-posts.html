@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Создать пост</title>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --text:#0a0a0a;
+      --muted:#6b7280; /* серый */
+      --line:#e5e7eb;  /* границы */
+      --accent:#111111; /* черный для кнопок и активных элементов */
+      --accent-weak:#f3f4f6; /* легкая заливка */
+      --focus:#111111;
+    }
+
+    *{ box-sizing: border-box; }
+    html, body{ height: 100%; }
+    body{
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    /* Header */
+    .header{
+      position: sticky; top:0; z-index: 10;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+    }
+    .header-inner{
+      max-width: 1100px; margin: 0 auto; padding: 12px 16px;
+      display:flex; align-items:center; gap:12px; justify-content: space-between;
+    }
+    .brand{ display:flex; align-items:center; gap:10px; font-weight:700; font-size: 30px; }
+
+
+    .header-actions{ display:flex; align-items:center; gap:10px; }
+    .btn{ border:1px solid var(--line); background:#fff; color:var(--text); padding:8px 14px; border-radius:999px; cursor:pointer; font-weight:600; }
+    .btn:focus{ outline:2px solid var(--focus); outline-offset:2px; }
+    .btn-primary{ background: var(--accent); color:#fff; border-color: var(--accent); }
+    .btn-ghost{ background: transparent; border-color: transparent; color: var(--muted); }
+    .btn[disabled]{ opacity:.6; cursor:not-allowed; }
+    a.btn{ text-decoration:none; display:inline-flex; align-items:center; }
+
+    /* Layout */
+    .container{ max-width: 1100px; margin: 24px auto; padding: 0 16px; display:grid; grid-template-columns: 1fr 280px; gap: 24px; }
+    @media (max-width: 900px){ .container{ grid-template-columns: 1fr; } }
+
+    /* Composer */
+    .card{ background:#fff; border:1px solid var(--line); border-radius:12px; }
+
+    .composer{ padding: 18px; }
+    .composer h1{ font-size: 22px; margin: 0 0 14px; }
+
+    /* Community picker (как в скриншоте Select a community) */
+    .picker{ display:flex; align-items:center; gap:8px; }
+    .picker-btn{ border:1px solid var(--line); background:#fff; border-radius:999px; padding:8px 12px; display:inline-flex; align-items:center; gap:8px; cursor:pointer; }
+    .picker-btn .avatar{ width:20px; height:20px; border-radius:50%; border:2px solid #111; display:inline-block; }
+    .picker small{ color: var(--muted); }
+
+    /* Tabs */
+    .tabs{ display:flex; align-items:center; gap:10px; margin-top: 14px; border-bottom:1px solid var(--line); }
+    .tab{ padding:10px 12px; cursor:pointer; color: var(--muted); border-bottom:2px solid transparent; font-weight:600; }
+    .tab.active{ color: var(--text); border-color: var(--accent); }
+
+    /* Inputs */
+    .field{ margin-top: 14px; }
+    .title-input{ width:100%; padding:14px 16px; border:1px solid var(--line); border-radius:12px; font-size:16px; }
+    .counter{ color: var(--muted); font-size: 12px; margin-top:6px; text-align:right; }
+
+    .tag-row{ margin-top: 12px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .tag-input{ flex:1; min-width: 180px; padding:10px 12px; border:1px solid var(--line); border-radius:999px; }
+    .tag{ background: var(--accent-weak); border:1px solid var(--line); padding:6px 10px; border-radius:999px; font-size: 13px; }
+
+    /* Toolbar + editor */
+    .editor{ margin-top: 12px; border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+    .toolbar{ display:flex; gap:8px; padding:8px; border-bottom:1px solid var(--line); background:#fff; }
+    .tool{ background:#fff; border:1px solid var(--line); padding:6px 10px; border-radius:8px; font-size:14px; color: var(--muted); cursor:pointer; }
+    .tool.active{ color:#111; border-color:#111; }
+    .textarea{ width:100%; min-height: 160px; border: none; padding: 12px; resize: vertical; font-size: 15px; outline: none; }
+
+    /* Panes visibility */
+    .pane{ display:block; }
+    .hidden{ display:none; }
+
+    /* Media preview */
+    .preview-grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap:10px; margin-top:12px; }
+    .preview-item{ position:relative; border:1px solid var(--line); border-radius:10px; overflow:hidden; background:#fff; }
+    .preview-item img, .preview-item video{ width:100%; height:120px; object-fit:cover; display:block; }
+    .preview-item button{ position:absolute; top:6px; right:6px; background:#fff; border:1px solid var(--line); border-radius:999px; padding:4px 8px; cursor:pointer; font-size:12px; }
+
+    /* Footer actions */
+    .actions{ display:flex; justify-content:flex-end; gap:8px; padding: 12px 0 0; }
+
+    /* Sidebar help */
+    .aside{ padding: 14px; position: sticky; top: 70px; height: fit-content; }
+    .aside h3{ margin: 6px 0 12px; font-size: 14px; color: var(--muted); text-transform: uppercase; letter-spacing:.03em; }
+    .aside p{ margin: 0 0 10px; color: var(--muted); font-size:14px; }
+    .aside .tip{ border:1px solid var(--line); border-radius:10px; padding: 12px; }
+    
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="brand">
+        <span>Meddialog</span>
+      </div>
+      <div class="header-actions">
+        <a class="btn" href="index.html">Назад к постам</a>
+        <button class="btn-ghost" type="button" aria-disabled="true">Черновики • 1</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card composer">
+      <h1>Создать пост</h1>
+
+      <!-- Select a community
+      <div class="picker">
+        <button class="picker-btn" type="button" title="Выбрать сообщество">
+          <span class="avatar" aria-hidden="true"></span>
+          <span>Выбрать сообщество</span>
+          <span aria-hidden="true">▾</span>
+        </button>
+        <small>Публикация будет видна выбранному сообществу</small>
+      </div> -->
+
+      <!-- Tabs -->
+      <nav class="tabs" role="tablist">
+        <button class="tab active" data-tab="text" role="tab" aria-selected="true">Текст</button>
+        <button class="tab" data-tab="media" role="tab" aria-selected="false">Изображения & Видео</button>
+        <button class="tab" data-tab="link" role="tab" aria-selected="false">Ссылка</button>
+        <button class="tab" data-tab="poll" role="tab" aria-selected="false">Опрос</button>
+      </nav>
+
+      <!-- Title -->
+      <div class="field">
+        <input id="title" class="title-input" type="text" placeholder="Заголовок*" maxlength="300" />
+        <div class="counter"><span id="titleCount">0</span>/300</div>
+      </div>
+
+      <!-- Tags (optional)
+      <div class="tag-row">
+        <input class="tag-input" id="tagInput" placeholder="Добавить тег и нажать Enter" />
+        <div id="tagList" class="tag-list"></div>
+      </div> -->
+
+      <!-- Media pane -->
+      <div id="pane-media" class="pane hidden">
+        <div class="field">
+          <input id="mediaInput" type="file" accept="image/*,video/*" multiple />
+          <div class="counter" style="text-align:left">Можно выбрать несколько файлов (изображения и видео)</div>
+        </div>
+        <div id="mediaPreview" class="preview-grid"></div>
+      </div>
+
+      
+      <!-- Link pane (placeholder) -->
+      <div id="pane-link" class="pane hidden">
+        <div class="field">
+          <input id="linkUrl" class="title-input" type="url" placeholder="Вставьте ссылку" />
+        </div>
+      </div>
+
+      <!-- Poll pane (with options) -->
+      <div id="pane-poll" class="pane hidden">
+        <div class="field">
+          <input id="pollQuestion" class="title-input" type="text" placeholder="Вопрос опроса" />
+        </div>
+        <div class="field" id="pollOptionsWrap">
+          <div style="font-size:12px; color:#6b7280; margin-bottom:6px;">Добавьте от 2 до 6 вариантов</div>
+          <div id="pollOptions" style="display:flex; flex-direction:column; gap:8px;"></div>
+          <div style="display:flex; gap:8px; margin-top:8px;">
+            <button type="button" class="btn" id="addPollOption">Добавить вариант</button>
+            <button type="button" class="btn btn-ghost" id="clearPollOptions">Очистить</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Editor -->
+      <div class="editor" id="editor">
+        <textarea id="body" class="textarea" placeholder="Текст поста (опционально)"></textarea>
+      </div>
+
+
+
+
+      <!-- Actions -->
+      <div class="actions">
+        <button class="btn" type="button" id="saveDraft">Сохранить черновик</button>
+        <button class="btn-primary btn" type="button" id="publish" disabled>Опубликовать</button>
+      </div>
+    </section>
+
+    <aside class="card aside">
+      <h3>Подсказки</h3>
+      <div class="tip">
+        <p>— Заголовок обязателен, до 300 символов.</p>
+        <p>— Текст опционален. Вы можете прикрепить медиа, ссылку или создать опрос (вкладки пока демонстрационные).</p>
+        <p>— Оформление выдержано в строгих черно-белых тонах.</p>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    // Подсчет символов заголовка и управление кнопкой публикации
+    const titleEl = document.getElementById('title');
+    const titleCount = document.getElementById('titleCount');
+    const publishBtn = document.getElementById('publish');
+
+    function syncTitle(){
+      const len = titleEl.value.trim().length;
+      titleCount.textContent = len;
+      publishBtn.disabled = len === 0;
+    }
+    titleEl.addEventListener('input', syncTitle);
+    syncTitle();
+
+    // Табы: показываем соответствующие панели
+    const panes = {
+      text: () => {
+        document.getElementById('editor').classList.remove('hidden');
+        document.getElementById('pane-media').classList.add('hidden');
+        document.getElementById('pane-link').classList.add('hidden');
+        document.getElementById('pane-poll').classList.add('hidden');
+      },
+      media: () => {
+        // Для медиа оставляем поле описания (editor) видимым
+        document.getElementById('editor').classList.remove('hidden');
+        document.getElementById('pane-media').classList.remove('hidden');
+        document.getElementById('pane-link').classList.add('hidden');
+        document.getElementById('pane-poll').classList.add('hidden');
+      },
+      link: () => {
+        // Оставляем поле описания видимым вместе с добавлением ссылки
+        document.getElementById('editor').classList.remove('hidden');
+        document.getElementById('pane-media').classList.add('hidden');
+        document.getElementById('pane-link').classList.remove('hidden');
+        document.getElementById('pane-poll').classList.add('hidden');
+      },
+      poll: () => {
+        // Оставляем поле описания видимым вместе с опросом
+        document.getElementById('editor').classList.remove('hidden');
+        document.getElementById('pane-media').classList.add('hidden');
+        document.getElementById('pane-link').classList.add('hidden');
+        document.getElementById('pane-poll').classList.remove('hidden');
+      }
+    };
+
+    function activateTab(name){
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      const btn = document.querySelector(`.tab[data-tab="${name}"]`);
+      if (btn) btn.classList.add('active');
+      panes[name] && panes[name]();
+    }
+
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => activateTab(tab.dataset.tab));
+    });
+
+    // По умолчанию активен текст
+    activateTab('text');
+
+
+    // Медиа: выбор файлов и предпросмотр
+    const mediaInput = document.getElementById('mediaInput');
+    const mediaPreview = document.getElementById('mediaPreview');
+
+    function clearPreview(){ mediaPreview.innerHTML = ''; }
+
+    function addPreviewItem(file, url){
+      const wrap = document.createElement('div');
+      wrap.className = 'preview-item';
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.textContent = '×';
+      remove.title = 'Удалить';
+      remove.addEventListener('click', () => {
+        wrap.remove();
+      });
+
+      if (file.type.startsWith('image/')){
+        const img = document.createElement('img');
+        img.src = url;
+        wrap.appendChild(img);
+      } else if (file.type.startsWith('video/')){
+        const vid = document.createElement('video');
+        vid.src = url;
+        vid.controls = true;
+        wrap.appendChild(vid);
+      } else {
+        const div = document.createElement('div');
+        div.style.padding = '12px';
+        div.textContent = file.name;
+        wrap.appendChild(div);
+      }
+      wrap.appendChild(remove);
+      mediaPreview.appendChild(wrap);
+    }
+
+    if (mediaInput){
+      mediaInput.addEventListener('change', () => {
+        clearPreview();
+        const files = Array.from(mediaInput.files || []);
+        files.forEach(file => {
+          const url = URL.createObjectURL(file);
+          addPreviewItem(file, url);
+        });
+      });
+    }
+
+    // Опрос: динамические варианты
+    const pollOptionsContainer = document.getElementById('pollOptions');
+    const addPollOptionBtn = document.getElementById('addPollOption');
+    const clearPollOptionsBtn = document.getElementById('clearPollOptions');
+    const pollQuestionEl = document.getElementById('pollQuestion');
+
+    function createOptionRow(text = ''){
+      const row = document.createElement('div');
+      row.style.display = 'flex';
+      row.style.gap = '8px';
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'title-input';
+      input.placeholder = 'Вариант ответа';
+      input.value = text;
+      input.style.flex = '1';
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.className = 'btn btn-ghost';
+      remove.textContent = 'Удалить';
+      remove.addEventListener('click', () => row.remove());
+      row.appendChild(input);
+      row.appendChild(remove);
+      return row;
+    }
+
+    function ensureInitialOptions(){
+      if (!pollOptionsContainer) return;
+      pollOptionsContainer.innerHTML = '';
+      pollOptionsContainer.appendChild(createOptionRow());
+      pollOptionsContainer.appendChild(createOptionRow());
+    }
+
+    if (addPollOptionBtn){
+      addPollOptionBtn.addEventListener('click', () => {
+        const count = pollOptionsContainer.querySelectorAll('input[type="text"]').length;
+        if (count >= 6) { alert('Максимум 6 вариантов'); return; }
+        pollOptionsContainer.appendChild(createOptionRow());
+      });
+    }
+    if (clearPollOptionsBtn){
+      clearPollOptionsBtn.addEventListener('click', ensureInitialOptions);
+    }
+    ensureInitialOptions();
+
+    // // Псевдо-редактор: простые кнопки форматирования для наглядности
+    // document.querySelectorAll('.tool').forEach(tool => {
+    //   tool.addEventListener('click', () => {
+    //     const cmd = tool.dataset.cmd;
+    //     const textarea = document.getElementById('body');
+    //     const start = textarea.selectionStart;
+    //     const end = textarea.selectionEnd;
+    //     let before = textarea.value.slice(0, start);
+    //     let selected = textarea.value.slice(start, end);
+    //     let after = textarea.value.slice(end);
+
+    //     if (cmd === 'bold') selected = `**${selected || 'жирный'}**`;
+    //     if (cmd === 'italic') selected = `*${selected || 'курсив'}*`;
+    //     if (cmd === 'ul') selected = selected ? selected.split('\n').map(l => `- ${l}`).join('\n') : '- пункт';
+    //     if (cmd === 'ol') selected = selected ? selected.split('\n').map((l,i) => `${i+1}. ${l}`).join('\n') : '1. пункт';
+    //     if (cmd === 'code') selected = selected ? "`" + selected + "`" : '`код`';
+
+    //     textarea.value = before + selected + after;
+    //     textarea.focus();
+    //     textarea.selectionStart = before.length;
+    //     textarea.selectionEnd = before.length + selected.length;
+    //   });
+    // });
+
+    // Черновик (демо-обработчик)
+    document.getElementById('saveDraft').addEventListener('click', () => {
+      alert('Черновик сохранен (демо).');
+    });
+
+    // Обработчик публикации
+    publishBtn.addEventListener('click', async () => {
+        try {
+          const title = titleEl.value.trim();
+          if (!title) {
+            alert('Введите заголовок');
+            return;
+          }
+
+          const form = new FormData();
+          form.append('title', title);
+          form.append('body', document.getElementById('body').value || '');
+  
+          
+          // Добавляем имя автора и uniq_id из localStorage
+          const userData = JSON.parse(localStorage.getItem('user') || '{}');
+          if (userData?.name && userData?.uniq_id) {
+            form.append('author_name', userData.name);
+            form.append('user_uniq_id', userData.uniq_id);
+          } else {
+            console.warn('Имя пользователя или uniq_id не найдены в localStorage');
+            alert('Ошибка: Не удалось определить автора. Пожалуйста, войдите в систему.');
+            return;
+          }
+
+          // Ссылка (если на вкладке Link введена)
+          const linkEl = document.getElementById('linkUrl');
+          if (linkEl && linkEl.value.trim()) {
+            form.append('linkUrl', linkEl.value.trim());
+          }
+
+          // Опрос (если на вкладке Poll введен вопрос)
+          if (pollQuestionEl && pollQuestionEl.value.trim()) {
+            form.append('pollQuestion', pollQuestionEl.value.trim());
+            // соберем варианты
+            const optionInputs = pollOptionsContainer ? Array.from(pollOptionsContainer.querySelectorAll('input[type="text"]')) : [];
+            const options = optionInputs.map(i => i.value.trim()).filter(v => v);
+            if (options.length < 2){
+              alert('Добавьте минимум два варианта ответа для опроса');
+              return;
+            }
+            options.slice(0,6).forEach(v => form.append('poll_options[]', v));
+          }
+
+          // Медиа-файлы
+          const mediaInput = document.getElementById('mediaInput');
+          if (mediaInput && mediaInput.files && mediaInput.files.length) {
+            Array.from(mediaInput.files).forEach(file => {
+              form.append('media[]', file);
+            });
+          }
+
+          const resp = await fetch('../server/create_posts_api_server.php', {
+            method: 'POST',
+            body: form
+          });
+
+          const data = await resp.json();
+          if (!resp.ok || !data.ok) {
+            throw new Error(data.error || 'Ошибка публикации');
+          }
+
+          // Успешно. Можно очистить форму или перейти на список постов
+          alert('Пост опубликован!');
+          // пример перехода обратно к списку
+          window.location.href = 'index.html';
+        } catch (err) {
+          console.error(err);
+          alert('Ошибка: ' + err.message);
+        }
+      });
+  </script>
+</body>
+</html>

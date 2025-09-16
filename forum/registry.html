@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Регистрация | Meddialog</title>
+  <style>
+    /* Общие стили */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #1a1a1a;
+      color: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .form-container {
+      width: 100%;
+      max-width: 420px;
+      padding: 30px;
+      background-color: #f0f0f0;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .logo h1 {
+      font-size: 28px;
+      font-weight: 600;
+      color: #000;
+      letter-spacing: 0.5px;
+    }
+
+    .logo p {
+      color: #444;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 15px;
+      background-color: #fff;
+      color: #000;
+      transition: border 0.3s ease;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #888;
+    }
+
+    .btn {
+      padding: 14px;
+      background-color: #000;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #333;
+    }
+
+    .form-footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #555;
+    }
+
+    .form-footer a {
+      color: #000;
+      text-decoration: underline;
+    }
+
+    .form-footer a:hover {
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <div class="logo">
+      <h1>Meddialog</h1>
+      <p>Форум для медицинских специалистов</p>
+    </div>
+
+    <form action="#" method="post">
+      <div class="form-group">
+        <label for="fullname">ФИО</label>
+        <input type="text" id="fullname" name="fullname" placeholder="Иванов Иван Иванович" required />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Электронная почта</label>
+        <input type="email" id="email" name="email" placeholder="example@med.ru" required />
+      </div>
+
+      <div class="form-group">
+        <label for="specialty">Специальность</label>
+        <input type="text" id="specialty" name="specialty" placeholder="Терапевт, хирург и т.д." />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Пароль</label>
+        <input type="password" id="password" name="password" placeholder="••••••••" required />
+      </div>
+
+      <div class="form-group">
+        <label for="confirm_password">Подтвердите пароль</label>
+        <input type="password" id="confirm_password" name="confirm_password" placeholder="••••••••" required />
+      </div>
+
+      <button type="submit" class="btn">Зарегистрироваться</button>
+    </form>
+
+    <div class="form-footer">
+      Уже есть аккаунт? <a id="login" href="#">Войти</a>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Форум - Чтение публикации</title>
+  <style>
+    :root {
+      --bg-primary: #f9f9f9;
+      --bg-secondary: #121212;
+      --text-primary: black;
+      --text-secondary: #ccc;
+      --border-color: #333;
+      --accent: #4285f5;
+      --hover: #2d62c9;
+      --card-bg: #f9f9f9;
+      --btn-bg: #ffffff;
+      --btn-hover: #ffffff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+
+    /* Header */
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 330px;
+        background-color: #ffffff;
+        color: white;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        border-bottom: 1px solid #333;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      margin-left: 10px;
+    }
+
+    .btn-outline {
+      background-color: #f0f0f0;
+      color: #333;
+      border: 1px solid #ccc;
+    }
+
+    .btn-primary {
+      background-color: #111;
+      color: white;
+    }
+
+    /* Menu icon */
+    .menu-icon {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: white;
+    }
+
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      margin-left: 10px;
+    }
+
+    .btn-primary {
+      background-color: #1a1a1a;
+      color: white;
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      color: #1a1a1a;
+      border: 1px solid #1a1a1a;
+    }
+
+
+    /* Logo */
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: black;
+      font-weight: 700;
+      font-size: 30px;
+    }
+
+    .logo img {
+      width: 24px;
+      height: 24px;
+      filter: grayscale(100%);
+    }
+
+    /* Search bar */
+    .search-bar {
+      flex: 1;
+      max-width: 500px;
+      margin: 0 20px;
+      display: flex;
+      align-items: center;
+      background-color: #f0f0f0;
+      border-radius: 20px;
+      padding: 8px 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .search-bar input {
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 14px;
+      color: #333;
+      flex: 1;
+      padding: 0;
+    }
+
+    .search-bar i {
+      color: #777;
+      margin-right: 8px;
+      font-size: 16px;
+    }
+
+
+    .container {
+      display: flex;
+      gap: 20px;
+      max-width: 1200px;
+      margin: 50px auto;
+    }
+
+    .main-content {
+      flex: 3;
+      background-color: var(--card-bg);
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .post-header {
+      margin-bottom: 20px;
+    }
+
+    .post-title {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--text-primary);
+    }
+
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .post-meta img {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .post-actions {
+      display: flex;
+      gap: 15px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 8px 12px;
+      background-color: var(--btn-bg);
+      border: none;
+      border-radius: 12px;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .action-btn:hover {
+      background-color: var(--btn-hover);
+    }
+
+    .post-body {
+      margin: 20px 0;
+      font-size: 1rem;
+      white-space: pre-line;
+    }
+
+    /* User menu styles (to show logged-in user in header) */
+    .user-menu { position: relative; display: inline-block; }
+    .user-menu button { display: flex; align-items: center; gap: 8px; padding: 8px 16px; }
+    .dropdown-menu { display: none; position: absolute; right: 0; background: white; min-width: 200px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 1000; margin-top: 5px; overflow: hidden; }
+    .dropdown-menu a { display: block; padding: 10px 16px; color: #1a1a1b; text-decoration: none; transition: background-color 0.2s; }
+    .dropdown-menu a:hover { background-color: #f6f7f8; }
+    .divider { height: 1px; background-color: #e8e8e8; margin: 4px 0; }
+    .logout { color: #ed1c24 !important; }
+
+    .comment-section {
+      margin-top: 30px;
+    }
+
+    .comment {
+      margin-bottom: 20px;
+      border-left: 2px solid var(--accent);
+      padding-left: 15px;
+      position: relative;
+    }
+
+    .comment-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .comment-header img {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .comment-author {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .comment-time {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .comment-body {
+      margin-bottom: 10px;
+      font-size: 0.95rem;
+    }
+
+    .comment-actions {
+      display: flex;
+      gap: 15px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .comment-actions button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      color: var(--text-secondary);
+    }
+
+    .comment-actions button:hover {
+      color: var(--accent);
+    }
+
+    .reply {
+      margin-left: 40px;
+      margin-top: 10px;
+      border-left: 1px solid var(--border-color);
+      padding-left: 15px;
+    }
+
+    .sidebar {
+      flex: 1;
+      background-color: var(--card-bg);
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar h3 {
+      margin-bottom: 15px;
+      font-size: 1.2rem;
+      color: var(--text-primary);
+    }
+
+    .sidebar-item {
+      margin-bottom: 15px;
+      padding: 10px;
+      border-bottom: 1px solid var(--border-color);
+      cursor: pointer;
+    }
+
+    .sidebar-item:hover {
+      background-color: var(--btn-hover);
+    }
+
+    .sidebar-item:last-child {
+      border-bottom: none;
+    }
+
+    .sidebar-item img {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 8px;
+    }
+
+    .sidebar-item .title {
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+
+    .sidebar-item .meta {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+
+    <!-- Header -->
+  <div class="header">
+    <!-- Logo -->
+    <div class="logo">
+      <span>Meddiaolog</span>
+    </div>
+
+    <!-- Search Bar
+    <div class="search-bar">
+      <i>🔍</i>
+      <input type="text" placeholder="Поиск в Reddit" />
+    </div> -->
+
+    <!-- Right side buttons -->
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <a href="index.html" class="btn btn-outline">Назад</a>
+      <button onclick="window.location.href='publish-posts.html'" class="btn btn-outline">Опубликовать статью</button>
+      <div class="user-menu" id="userMenu">
+        <button class="btn btn-primary" id="userMenuButton">Зарегистрироваться</button>
+        <div class="dropdown-menu" id="userDropdown">
+          <a href="profile.html">Профиль</a>
+          <div class="divider"></div>
+          <a href="#" class="logout" id="logoutBtn">Выйти</a>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- Header -->
+
+
+  <div class="container">
+    <!-- Основное содержимое -->
+    <div class="main-content">
+      <div class="post-header">
+        <h1 class="post-title">Why is drinking energy drinks everyday frowned upon when lots of people drink coffee everyday, sometimes even multiple a day?</h1>
+        <div class="post-meta">
+          <img id="postAvatar" src="https://via.placeholder.com/30" alt="автор" />
+          <span id="postAuthor">_Jin_Chaeji</span>
+        </div>
+      </div>
+
+
+
+      <div class="post-body">
+        Similar why eating corn isn't frowned upon but drinking High fructose corn syrup would be.
+      </div>
+
+
+
+      <div class="comment-section">
+      </div>
+    </div>
+
+    <!-- Сайдбар -->
+    <div class="sidebar">
+      <div class="if_not_registred">
+        <h3>Новичок в Reddit?</h3>
+        <p>Создайте учетную запись и откройте для себя целый мир сообществ.</p>
+        <div class="sidebar-item" style="display: flex; align-items: center; gap: 10px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 4H20C21.1046 4 22 4.89543 22 6V18C22 19.1046 21.1046 20 20 20H4C2.89543 20 2 19.1046 2 18V6C2 4.89543 2.89543 4 4 4Z" stroke="currentColor" stroke-width="2"/>
+          <path d="M22 6L12 13L2 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <div class="title">Зарегистрироваться</div>
+      </div>
+    </div>
+
+    <h3>Последние обсуждения</h3>
+    <div id="recentList">
+      <!-- Будет заполнено динамически -->
+    </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== Auth UI helpers (mirror forum/index.html) =====
+    function getStoredUser(){
+      try { return JSON.parse(localStorage.getItem('user') || 'null'); } catch { return null; }
+    }
+
+    function clearStoredUser(){
+      localStorage.removeItem('user');
+    }
+
+    function updateAuthUI(){
+      const user = getStoredUser();
+      const btn = document.getElementById('userMenuButton');
+      const menu = document.getElementById('userDropdown');
+      if (!btn) return;
+      if (user){
+        const name = user.name || user.fullname || (user.email ? user.email.split('@')[0] : 'user');
+        btn.textContent = `u/${name}`;
+        btn.classList.remove('btn-primary');
+        btn.classList.add('btn');
+        btn.onclick = () => { menu && (menu.style.display = menu.style.display === 'block' ? 'none' : 'block'); };
+      } else {
+        btn.textContent = 'Зарегистрироваться';
+        btn.classList.add('btn-primary');
+        btn.onclick = () => { window.location.href = 'registry.html'; };
+      }
+    }
+
+    // Show/hide block for non-registered users in sidebar
+    function toggleNotRegistered(){
+      const user = getStoredUser();
+      const box = document.querySelector('.if_not_registred');
+      if (!box) return;
+      box.style.display = user ? 'none' : 'block';
+    }
+
+    // Load recent posts into sidebar
+    async function loadRecentDiscussions(limit = 5){
+      const root = document.getElementById('recentList');
+      if (!root) return;
+      root.innerHTML = '';
+      try{
+        const resp = await fetch('../server/list_posts_api_server.php');
+        const data = await resp.json();
+        if (!resp.ok || !data.ok) throw new Error(data.error || 'Ошибка загрузки');
+        const posts = Array.isArray(data.posts) ? data.posts.slice(0, limit) : [];
+        if (posts.length === 0){
+          root.innerHTML = '<div class="sidebar-item">Постов пока нет</div>';
+          return;
+        }
+        posts.forEach(p => {
+          const item = document.createElement('a');
+          item.href = `read_forum.html?post_id=${p.id}`;
+          item.style.textDecoration = 'none';
+          item.style.color = 'inherit';
+          item.className = 'sidebar-item';
+          const comments = Number(p.comments_count || 0);
+          const likes = Number(p.likes_count || 0);
+          item.innerHTML = `
+            <img class="author-avatar" src="https://via.placeholder.com/20" alt="post" />
+            <div>
+              <div class="title">${(p.title || 'Без названия').toString().slice(0, 80)}${(p.title||'').length>80?'…':''}</div>
+              <div class="meta">${likes} лайков • ${comments} комментариев</div>
+            </div>
+          `;
+          root.appendChild(item);
+        });
+      } catch(err){
+        root.innerHTML = `<div class="sidebar-item">Ошибка: ${err.message}</div>`;
+      }
+    }
+
+    // Close dropdown on outside click
+    document.addEventListener('click', (e) => {
+      const menuWrap = document.getElementById('userMenu');
+      const menu = document.getElementById('userDropdown');
+      if (menu && menuWrap && !menuWrap.contains(e.target)){
+        menu.style.display = 'none';
+      }
+    });
+
+    // Initialize header auth UI and logout handler
+    document.addEventListener('DOMContentLoaded', () => {
+      updateAuthUI();
+      toggleNotRegistered();
+      loadRecentDiscussions(5);
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (logoutBtn){
+        logoutBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          clearStoredUser();
+          updateAuthUI();
+          toggleNotRegistered();
+          loadRecentDiscussions(5);
+        });
+      }
+    });
+
+    // Простая интерактивность (пример: клик по голосованию)
+    document.querySelectorAll('.vote-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const currentText = btn.textContent.trim();
+        const num = parseInt(currentText.replace(/[^0-9]/g, '')) || 0;
+        btn.childNodes[btn.childNodes.length - 1].textContent = ' ' + (num + 1);
+      });
+    });
+
+    // ===== Загрузка поста по post_id из URL =====
+    function getPostId(){
+      const params = new URLSearchParams(window.location.search);
+      return parseInt(params.get('post_id') || '0', 10);
+    }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+
+    async function fetchPost(postId){
+      const resp = await fetch(`../server/get_post_api_server.php?post_id=${postId}`);
+      const data = await resp.json();
+      if (!resp.ok || !data.ok){
+        throw new Error(data.error || 'Ошибка загрузки поста');
+      }
+      return data;
+    }
+
+    function renderPost(data){
+      // Заголовок
+      const titleEl = document.querySelector('.post-title');
+      if (titleEl) titleEl.textContent = data.post.title || 'Без названия';
+
+      // Мета: аватар, автор, дата (больше не зависит от количества span)
+      const avatar = document.getElementById('postAvatar');
+      const author = document.getElementById('postAuthor');
+      const meta = document.querySelector('.post-meta');
+      const when = data.post.created_at ? new Date(data.post.created_at).toLocaleString() : '';
+
+      if (author) author.textContent = data.post.author_name || 'Пользователь';
+
+      if (avatar){
+        const url = data.post.author_avatar_url ? `../${data.post.author_avatar_url}` : null;
+        if (url){
+          avatar.src = url;
+        } else {
+          // Нет URL: оставляем placeholder
+          avatar.src = 'https://via.placeholder.com/30';
+        }
+      }
+
+      if (meta){
+        let whenSpan = document.getElementById('postWhen');
+        if (!whenSpan){
+          whenSpan = document.createElement('span');
+          whenSpan.id = 'postWhen';
+          meta.appendChild(whenSpan);
+        }
+        whenSpan.textContent = when;
+      }
+
+      // Тело поста: текст и/или ссылка. Добавляем медиавложения (если есть) ниже текста
+      const bodyEl = document.querySelector('.post-body');
+      if (bodyEl){
+        bodyEl.innerHTML = '';
+        const text = (data.post.body || '').trim();
+        const link = (data.post.link_url || '').trim();
+        if (text){
+          const p = document.createElement('div');
+          p.textContent = text;
+          bodyEl.appendChild(p);
+        }
+        if (link){
+          const a = document.createElement('a');
+          a.href = link;
+          a.textContent = link;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          a.style.display = 'inline-block';
+          a.style.marginTop = '8px';
+          bodyEl.appendChild(a);
+        }
+
+        if (Array.isArray(data.files) && data.files.length){
+          const mediaWrap = document.createElement('div');
+          mediaWrap.style.marginTop = '12px';
+          data.files.forEach(f => {
+            if (f.file_type === 'image'){
+              const img = document.createElement('img');
+              img.src = `../${f.file_path}`;
+              img.alt = '';
+              img.style.maxWidth = '100%';
+              img.style.borderRadius = '8px';
+              img.style.marginBottom = '8px';
+              mediaWrap.appendChild(img);
+            } else if (f.file_type === 'video'){
+              const vid = document.createElement('video');
+              vid.src = `../${f.file_path}`;
+              vid.controls = true;
+              vid.style.width = '100%';
+              vid.style.borderRadius = '8px';
+              vid.style.marginBottom = '8px';
+              mediaWrap.appendChild(vid);
+            }
+          });
+          bodyEl.appendChild(mediaWrap);
+        }
+
+        // Опрос: если есть вопрос, покажем простой блок опроса (демо)
+        const pollQ = (data.post.poll_question || '').trim();
+        if (pollQ){
+          const poll = document.createElement('div');
+          poll.style.marginTop = '14px';
+          poll.style.padding = '12px';
+          poll.style.border = '1px solid #e5e7eb';
+          poll.style.borderRadius = '8px';
+          poll.innerHTML = `
+            <div style="font-weight:600; margin-bottom:8px;">${pollQ.replace(/</g,'&lt;')}</div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button class="action-btn" type="button">Вариант 1</button>
+              <button class="action-btn" type="button">Вариант 2</button>
+            </div>
+            <div style="color:#777; font-size:12px; margin-top:6px;">Демо-опрос. Варианты не заданы.</div>
+          `;
+          bodyEl.appendChild(poll);
+        }
+      }
+
+      // Комментарии: перерисуем список в текущем контейнере, сохраняя классы
+      const commentsRoot = document.querySelector('.comment-section');
+      if (commentsRoot){
+        commentsRoot.innerHTML = '';
+
+        // Всегда показываем форму добавления комментария
+        let currentUser = null;
+        try { currentUser = JSON.parse(localStorage.getItem('user') || 'null'); } catch(e) { currentUser = null; }
+
+        const formWrap = document.createElement('div');
+        formWrap.className = 'comment';
+        formWrap.style.borderLeft = '2px solid transparent';
+        const displayName = (currentUser && currentUser.name) ? currentUser.name : 'Гость';
+        formWrap.innerHTML = `
+          <div class="comment-header">
+            <div>
+              <span class="comment-author">Комментирует: ${displayName.replace(/</g,'&lt;')}</span>
+            </div>
+          </div>
+          <div class="comment-body">
+            <textarea id="newCommentBody" rows="3" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:6px;"></textarea>
+          </div>
+          <div class="comment-actions">
+            <button id="sendCommentBtn" class="vote-btn">Отправить</button>
+          </div>
+        `;
+        commentsRoot.appendChild(formWrap);
+
+        // Список комментариев
+        (data.comments || []).forEach(c => {
+          const item = document.createElement('div');
+          item.className = 'comment';
+          item.innerHTML = `
+            <div class="comment-header">
+              <img src="https://via.placeholder.com/30" alt="${c.author || 'Guest'}" />
+              <div>
+                <span class="comment-author">${c.author || 'Guest'}</span>
+                <span class="comment-time">• ${c.created_at ? new Date(c.created_at).toLocaleString() : ''}</span>
+              </div>
+            </div>
+            <div class="comment-body">${(c.body || '').replace(/</g,'&lt;')}</div>
+            <div class="comment-actions">
+              <button class="vote-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                0
+              </button>
+              <button>Ответить</button>
+              <button>Награда</button>
+              <button>Поделиться</button>
+            </div>
+          `;
+          commentsRoot.appendChild(item);
+        });
+
+        // Обработчик отправки комментария (если не авторизован, сервер вернёт 401 и мы покажем текст ошибки)
+        const sendBtn = document.getElementById('sendCommentBtn');
+        if (sendBtn){
+          sendBtn.addEventListener('click', async () => {
+            // Повторно читаем пользователя для надежности
+            let u = null;
+            try { u = JSON.parse(localStorage.getItem('user') || 'null'); } catch(e) { u = null; }
+            const textarea = document.getElementById('newCommentBody');
+            const text = (textarea.value || '').trim();
+            if (!text) { alert('Введите текст комментария'); return; }
+            try{
+              const form = new FormData();
+              form.append('post_id', data.post.id);
+              // Добавляем данные пользователя, если он авторизован
+              if (u && u.uniq_id){
+                form.append('author', (u.name || 'User'));
+                form.append('author_name', (u.name || 'User'));
+                form.append('user_uniq_id', u.uniq_id);
+              }
+              form.append('body', text);
+              const resp = await fetch('../server/add_comment_api_server.php', { method: 'POST', body: form });
+              const ans = await resp.json();
+              if (!resp.ok || !ans.ok) throw new Error(ans.error || 'Ошибка отправки');
+              textarea.value = '';
+              // Перезагрузим пост для обновления списка комментариев
+              const refreshed = await fetchPost(data.post.id);
+              renderPost(refreshed);
+            } catch(e){
+              alert(e.message);
+            }
+          });
+        }
+      }
+    }
+
+    (async function init(){
+      const id = getPostId();
+      if (!id){
+        // если зашли напрямую без id — оставляем статичное содержимое
+        return;
+      }
+      try{
+        const data = await fetchPost(id);
+        renderPost(data);
+      } catch(e){
+        console.error(e);
+        // Можно показать сообщение об ошибке внутри .post-body
+      }
+    })();
+  </script>
+
+</body>
+</html>

@@ -84,7 +84,7 @@ const Home = () => {
                 <div className="container">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-20">
                         <div className="">
-                        <h2 data-aos="fade-right" className='font-bold text-5xl mb-4'>Hовости</h2>
+                        <h2 data-aos="fade-right" className='font-bold text-5xl mb-4'>Сервисы</h2>
                         <p data-aos="fade-right">Ключевые функции нашего сайта для вашего здоровья и обучения</p>
                         </div>
                         <p data-aos="fade-left" className='text-xl'>Мы предоставляем актуальные медицинские новости, чтобы вы всегда были в курсе событий. Наши видеоуроки помогут вам освоить новые навыки и улучшить здоровье. Присоединяйтесь к нашему форуму для обсуждения и обмена опытом с другими пользователями.</p>
@@ -139,8 +139,8 @@ const Home = () => {
                     <div className="flex items-end justify-between mb-20">
                         <div data-aos="fade-right">
                             <h4 className='font-bold mb-4'>Blog</h4>
-                            <h2 className='text-5xl font-bold mb-6'>Short heading goes here</h2>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. </p>
+                            <h2 className='text-5xl font-bold mb-6'>Наши статьи</h2>
+                            <p>Последние новости и статьи о медицине и здоровье </p>
                         </div>
                         <button data-aos="fade-left" className='py-3 px-6 hidden lg:block bg-white border-2 border-black'>
                             View More
